@@ -1,0 +1,851 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 55;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		856711DC2F0E8AC500BA6FA3 /* typst_previewApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 856711DB2F0E8AC500BA6FA3 /* typst_previewApp.swift */; };
+		856711DE2F0E8AC500BA6FA3 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 856711DD2F0E8AC500BA6FA3 /* ContentView.swift */; };
+		856711E02F0E8AC600BA6FA3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 856711DF2F0E8AC600BA6FA3 /* Assets.xcassets */; };
+		856711E32F0E8AC600BA6FA3 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 856711E22F0E8AC600BA6FA3 /* Preview Assets.xcassets */; };
+		856711EE2F0E8AC600BA6FA3 /* typst_previewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 856711ED2F0E8AC600BA6FA3 /* typst_previewTests.swift */; };
+		856711F82F0E8AC600BA6FA3 /* typst_previewUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 856711F72F0E8AC600BA6FA3 /* typst_previewUITests.swift */; };
+		856711FA2F0E8AC600BA6FA3 /* typst_previewUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 856711F92F0E8AC600BA6FA3 /* typst_previewUITestsLaunchTests.swift */; };
+		8567120D2F0E8AFA00BA6FA3 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8567120C2F0E8AFA00BA6FA3 /* Quartz.framework */; };
+		856712102F0E8AFA00BA6FA3 /* PreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8567120F2F0E8AFA00BA6FA3 /* PreviewViewController.swift */; };
+		856712122F0E8AFA00BA6FA3 /* PreviewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 856712112F0E8AFA00BA6FA3 /* PreviewProvider.swift */; };
+		856712152F0E8AFA00BA6FA3 /* PreviewViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 856712132F0E8AFA00BA6FA3 /* PreviewViewController.xib */; };
+		8567121A2F0E8AFA00BA6FA3 /* typst_quick_exten.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 8567120A2F0E8AFA00BA6FA3 /* typst_quick_exten.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		856711EA2F0E8AC600BA6FA3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 856711D02F0E8AC500BA6FA3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 856711D72F0E8AC500BA6FA3;
+			remoteInfo = typst_preview;
+		};
+		856711F42F0E8AC600BA6FA3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 856711D02F0E8AC500BA6FA3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 856711D72F0E8AC500BA6FA3;
+			remoteInfo = typst_preview;
+		};
+		856712182F0E8AFA00BA6FA3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 856711D02F0E8AC500BA6FA3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 856712092F0E8AFA00BA6FA3;
+			remoteInfo = typst_quick_exten;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		8567121E2F0E8AFA00BA6FA3 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				8567121A2F0E8AFA00BA6FA3 /* typst_quick_exten.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		856711D82F0E8AC500BA6FA3 /* typst_preview.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = typst_preview.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		856711DB2F0E8AC500BA6FA3 /* typst_previewApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = typst_previewApp.swift; sourceTree = "<group>"; };
+		856711DD2F0E8AC500BA6FA3 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		856711DF2F0E8AC600BA6FA3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		856711E22F0E8AC600BA6FA3 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		856711E42F0E8AC600BA6FA3 /* typst_preview.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = typst_preview.entitlements; sourceTree = "<group>"; };
+		856711E92F0E8AC600BA6FA3 /* typst_previewTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = typst_previewTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		856711ED2F0E8AC600BA6FA3 /* typst_previewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = typst_previewTests.swift; sourceTree = "<group>"; };
+		856711F32F0E8AC600BA6FA3 /* typst_previewUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = typst_previewUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		856711F72F0E8AC600BA6FA3 /* typst_previewUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = typst_previewUITests.swift; sourceTree = "<group>"; };
+		856711F92F0E8AC600BA6FA3 /* typst_previewUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = typst_previewUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		8567120A2F0E8AFA00BA6FA3 /* typst_quick_exten.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = typst_quick_exten.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		8567120C2F0E8AFA00BA6FA3 /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = System/Library/Frameworks/Quartz.framework; sourceTree = SDKROOT; };
+		8567120F2F0E8AFA00BA6FA3 /* PreviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewViewController.swift; sourceTree = "<group>"; };
+		856712112F0E8AFA00BA6FA3 /* PreviewProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewProvider.swift; sourceTree = "<group>"; };
+		856712142F0E8AFA00BA6FA3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreviewViewController.xib; sourceTree = "<group>"; };
+		856712162F0E8AFA00BA6FA3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		856712172F0E8AFA00BA6FA3 /* typst_quick_exten.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = typst_quick_exten.entitlements; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		856711D52F0E8AC500BA6FA3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		856711E62F0E8AC600BA6FA3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		856711F02F0E8AC600BA6FA3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		856712072F0E8AFA00BA6FA3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8567120D2F0E8AFA00BA6FA3 /* Quartz.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		856711CF2F0E8AC500BA6FA3 = {
+			isa = PBXGroup;
+			children = (
+				856711DA2F0E8AC500BA6FA3 /* typst_preview */,
+				856711EC2F0E8AC600BA6FA3 /* typst_previewTests */,
+				856711F62F0E8AC600BA6FA3 /* typst_previewUITests */,
+				8567120E2F0E8AFA00BA6FA3 /* typst_quick_exten */,
+				8567120B2F0E8AFA00BA6FA3 /* Frameworks */,
+				856711D92F0E8AC500BA6FA3 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		856711D92F0E8AC500BA6FA3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				856711D82F0E8AC500BA6FA3 /* typst_preview.app */,
+				856711E92F0E8AC600BA6FA3 /* typst_previewTests.xctest */,
+				856711F32F0E8AC600BA6FA3 /* typst_previewUITests.xctest */,
+				8567120A2F0E8AFA00BA6FA3 /* typst_quick_exten.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		856711DA2F0E8AC500BA6FA3 /* typst_preview */ = {
+			isa = PBXGroup;
+			children = (
+				856711DB2F0E8AC500BA6FA3 /* typst_previewApp.swift */,
+				856711DD2F0E8AC500BA6FA3 /* ContentView.swift */,
+				856711DF2F0E8AC600BA6FA3 /* Assets.xcassets */,
+				856711E42F0E8AC600BA6FA3 /* typst_preview.entitlements */,
+				856711E12F0E8AC600BA6FA3 /* Preview Content */,
+			);
+			path = typst_preview;
+			sourceTree = "<group>";
+		};
+		856711E12F0E8AC600BA6FA3 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				856711E22F0E8AC600BA6FA3 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		856711EC2F0E8AC600BA6FA3 /* typst_previewTests */ = {
+			isa = PBXGroup;
+			children = (
+				856711ED2F0E8AC600BA6FA3 /* typst_previewTests.swift */,
+			);
+			path = typst_previewTests;
+			sourceTree = "<group>";
+		};
+		856711F62F0E8AC600BA6FA3 /* typst_previewUITests */ = {
+			isa = PBXGroup;
+			children = (
+				856711F72F0E8AC600BA6FA3 /* typst_previewUITests.swift */,
+				856711F92F0E8AC600BA6FA3 /* typst_previewUITestsLaunchTests.swift */,
+			);
+			path = typst_previewUITests;
+			sourceTree = "<group>";
+		};
+		8567120B2F0E8AFA00BA6FA3 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				8567120C2F0E8AFA00BA6FA3 /* Quartz.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		8567120E2F0E8AFA00BA6FA3 /* typst_quick_exten */ = {
+			isa = PBXGroup;
+			children = (
+				8567120F2F0E8AFA00BA6FA3 /* PreviewViewController.swift */,
+				856712112F0E8AFA00BA6FA3 /* PreviewProvider.swift */,
+				856712132F0E8AFA00BA6FA3 /* PreviewViewController.xib */,
+				856712162F0E8AFA00BA6FA3 /* Info.plist */,
+				856712172F0E8AFA00BA6FA3 /* typst_quick_exten.entitlements */,
+			);
+			path = typst_quick_exten;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		856711D72F0E8AC500BA6FA3 /* typst_preview */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 856711FD2F0E8AC600BA6FA3 /* Build configuration list for PBXNativeTarget "typst_preview" */;
+			buildPhases = (
+				8556EE672F59DB6E000534D6 /* Build Rust Library */,
+				856711D42F0E8AC500BA6FA3 /* Sources */,
+				856711D52F0E8AC500BA6FA3 /* Frameworks */,
+				856711D62F0E8AC500BA6FA3 /* Resources */,
+				8567121E2F0E8AFA00BA6FA3 /* Embed App Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				856712192F0E8AFA00BA6FA3 /* PBXTargetDependency */,
+			);
+			name = typst_preview;
+			productName = typst_preview;
+			productReference = 856711D82F0E8AC500BA6FA3 /* typst_preview.app */;
+			productType = "com.apple.product-type.application";
+		};
+		856711E82F0E8AC600BA6FA3 /* typst_previewTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 856712002F0E8AC600BA6FA3 /* Build configuration list for PBXNativeTarget "typst_previewTests" */;
+			buildPhases = (
+				856711E52F0E8AC600BA6FA3 /* Sources */,
+				856711E62F0E8AC600BA6FA3 /* Frameworks */,
+				856711E72F0E8AC600BA6FA3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				856711EB2F0E8AC600BA6FA3 /* PBXTargetDependency */,
+			);
+			name = typst_previewTests;
+			productName = typst_previewTests;
+			productReference = 856711E92F0E8AC600BA6FA3 /* typst_previewTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		856711F22F0E8AC600BA6FA3 /* typst_previewUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 856712032F0E8AC600BA6FA3 /* Build configuration list for PBXNativeTarget "typst_previewUITests" */;
+			buildPhases = (
+				856711EF2F0E8AC600BA6FA3 /* Sources */,
+				856711F02F0E8AC600BA6FA3 /* Frameworks */,
+				856711F12F0E8AC600BA6FA3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				856711F52F0E8AC600BA6FA3 /* PBXTargetDependency */,
+			);
+			name = typst_previewUITests;
+			productName = typst_previewUITests;
+			productReference = 856711F32F0E8AC600BA6FA3 /* typst_previewUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		856712092F0E8AFA00BA6FA3 /* typst_quick_exten */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8567121B2F0E8AFA00BA6FA3 /* Build configuration list for PBXNativeTarget "typst_quick_exten" */;
+			buildPhases = (
+				8556EE682F59DCFF000534D6 /* Run Script */,
+				856712062F0E8AFA00BA6FA3 /* Sources */,
+				856712072F0E8AFA00BA6FA3 /* Frameworks */,
+				856712082F0E8AFA00BA6FA3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = typst_quick_exten;
+			productName = typst_quick_exten;
+			productReference = 8567120A2F0E8AFA00BA6FA3 /* typst_quick_exten.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		856711D02F0E8AC500BA6FA3 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1340;
+				LastUpgradeCheck = 1340;
+				TargetAttributes = {
+					856711D72F0E8AC500BA6FA3 = {
+						CreatedOnToolsVersion = 13.4.1;
+					};
+					856711E82F0E8AC600BA6FA3 = {
+						CreatedOnToolsVersion = 13.4.1;
+						TestTargetID = 856711D72F0E8AC500BA6FA3;
+					};
+					856711F22F0E8AC600BA6FA3 = {
+						CreatedOnToolsVersion = 13.4.1;
+						TestTargetID = 856711D72F0E8AC500BA6FA3;
+					};
+					856712092F0E8AFA00BA6FA3 = {
+						CreatedOnToolsVersion = 13.4.1;
+					};
+				};
+			};
+			buildConfigurationList = 856711D32F0E8AC500BA6FA3 /* Build configuration list for PBXProject "typst_preview" */;
+			compatibilityVersion = "Xcode 13.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 856711CF2F0E8AC500BA6FA3;
+			productRefGroup = 856711D92F0E8AC500BA6FA3 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				856711D72F0E8AC500BA6FA3 /* typst_preview */,
+				856711E82F0E8AC600BA6FA3 /* typst_previewTests */,
+				856711F22F0E8AC600BA6FA3 /* typst_previewUITests */,
+				856712092F0E8AFA00BA6FA3 /* typst_quick_exten */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		856711D62F0E8AC500BA6FA3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				856711E32F0E8AC600BA6FA3 /* Preview Assets.xcassets in Resources */,
+				856711E02F0E8AC600BA6FA3 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		856711E72F0E8AC600BA6FA3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		856711F12F0E8AC600BA6FA3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		856712082F0E8AFA00BA6FA3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				856712152F0E8AFA00BA6FA3 /* PreviewViewController.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		8556EE672F59DB6E000534D6 /* Build Rust Library */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Build Rust Library";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n# 自动编译 Rust libtypst\necho \"正在编译 libtypst...\"\n\"${PROJECT_DIR}/scripts/build_rust.sh\"\n";
+		};
+		8556EE682F59DCFF000534D6 /* Run Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n${PROJECT_DIR}/scripts/build_rust.sh\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		856711D42F0E8AC500BA6FA3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				856711DE2F0E8AC500BA6FA3 /* ContentView.swift in Sources */,
+				856711DC2F0E8AC500BA6FA3 /* typst_previewApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		856711E52F0E8AC600BA6FA3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				856711EE2F0E8AC600BA6FA3 /* typst_previewTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		856711EF2F0E8AC600BA6FA3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				856711FA2F0E8AC600BA6FA3 /* typst_previewUITestsLaunchTests.swift in Sources */,
+				856711F82F0E8AC600BA6FA3 /* typst_previewUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		856712062F0E8AFA00BA6FA3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				856712102F0E8AFA00BA6FA3 /* PreviewViewController.swift in Sources */,
+				856712122F0E8AFA00BA6FA3 /* PreviewProvider.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		856711EB2F0E8AC600BA6FA3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 856711D72F0E8AC500BA6FA3 /* typst_preview */;
+			targetProxy = 856711EA2F0E8AC600BA6FA3 /* PBXContainerItemProxy */;
+		};
+		856711F52F0E8AC600BA6FA3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 856711D72F0E8AC500BA6FA3 /* typst_preview */;
+			targetProxy = 856711F42F0E8AC600BA6FA3 /* PBXContainerItemProxy */;
+		};
+		856712192F0E8AFA00BA6FA3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 856712092F0E8AFA00BA6FA3 /* typst_quick_exten */;
+			targetProxy = 856712182F0E8AFA00BA6FA3 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		856712132F0E8AFA00BA6FA3 /* PreviewViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				856712142F0E8AFA00BA6FA3 /* Base */,
+			);
+			name = PreviewViewController.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		856711FB2F0E8AC600BA6FA3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.1;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		856711FC2F0E8AC600BA6FA3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.1;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		856711FE2F0E8AC600BA6FA3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = typst_preview/typst_preview.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"typst_preview/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/libs/include/**";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/typst_quick_exten",
+					"$(PROJECT_DIR)/libs",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-ltypst_c",
+					"-framework",
+					Security,
+					"-framework",
+					CoreFoundation,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "test.typst-preview";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/typst_preview/typst_preview-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		856711FF2F0E8AC600BA6FA3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = typst_preview/typst_preview.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"typst_preview/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/libs/include/**";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/typst_quick_exten",
+					"$(PROJECT_DIR)/libs",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-ltypst_c",
+					"-framework",
+					Security,
+					"-framework",
+					CoreFoundation,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "test.typst-preview";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/typst_preview/typst_preview-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		856712012F0E8AC600BA6FA3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "test.typst-previewTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/typst_preview.app/Contents/MacOS/typst_preview";
+			};
+			name = Debug;
+		};
+		856712022F0E8AC600BA6FA3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "test.typst-previewTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/typst_preview.app/Contents/MacOS/typst_preview";
+			};
+			name = Release;
+		};
+		856712042F0E8AC600BA6FA3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "test.typst-previewUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = typst_preview;
+			};
+			name = Debug;
+		};
+		856712052F0E8AC600BA6FA3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "test.typst-previewUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = typst_preview;
+			};
+			name = Release;
+		};
+		8567121C2F0E8AFA00BA6FA3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = typst_quick_exten/typst_quick_exten.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/libs/include";
+				INFOPLIST_FILE = typst_quick_exten/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = typst_quick_exten;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/typst_quick_exten",
+					"$(PROJECT_DIR)/libs",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-ltypst_c",
+					"-framework",
+					Security,
+					"-framework",
+					CoreFoundation,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "test.typst-preview.typst-quick-exten";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/typst_quick_exten/typst_quick_exten-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		8567121D2F0E8AFA00BA6FA3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = typst_quick_exten/typst_quick_exten.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/libs/include";
+				INFOPLIST_FILE = typst_quick_exten/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = typst_quick_exten;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/typst_quick_exten",
+					"$(PROJECT_DIR)/libs",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-ltypst_c",
+					"-framework",
+					Security,
+					"-framework",
+					CoreFoundation,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "test.typst-preview.typst-quick-exten";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/typst_quick_exten/typst_quick_exten-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		856711D32F0E8AC500BA6FA3 /* Build configuration list for PBXProject "typst_preview" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				856711FB2F0E8AC600BA6FA3 /* Debug */,
+				856711FC2F0E8AC600BA6FA3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		856711FD2F0E8AC600BA6FA3 /* Build configuration list for PBXNativeTarget "typst_preview" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				856711FE2F0E8AC600BA6FA3 /* Debug */,
+				856711FF2F0E8AC600BA6FA3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		856712002F0E8AC600BA6FA3 /* Build configuration list for PBXNativeTarget "typst_previewTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				856712012F0E8AC600BA6FA3 /* Debug */,
+				856712022F0E8AC600BA6FA3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		856712032F0E8AC600BA6FA3 /* Build configuration list for PBXNativeTarget "typst_previewUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				856712042F0E8AC600BA6FA3 /* Debug */,
+				856712052F0E8AC600BA6FA3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8567121B2F0E8AFA00BA6FA3 /* Build configuration list for PBXNativeTarget "typst_quick_exten" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8567121C2F0E8AFA00BA6FA3 /* Debug */,
+				8567121D2F0E8AFA00BA6FA3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 856711D02F0E8AC500BA6FA3 /* Project object */;
+}

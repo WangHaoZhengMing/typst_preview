@@ -1,0 +1,109 @@
+#!/bin/bash
+
+# build_rust.sh - 自动编译libtypst Rust代码
+# 此脚本会在Xcode编译前自动运行
+
+set -e  # 遇到错误立即退出
+
+# 颜色输出
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+echo -e "${GREEN}===== 开始编译 libtypst =====${NC}"
+
+# 项目根目录
+PROJECT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+RUST_DIR="$PROJECT_DIR/libtypst"
+OUTPUT_DIR="$PROJECT_DIR/libs"
+
+# Xcode 的编译环境中可能没有包含用户的 PATH，因此手动添加 Rust 环境变量
+if [ -f "$HOME/.cargo/env" ]; then
+    source "$HOME/.cargo/env"
+fi
+export PATH="$HOME/.cargo/bin:/usr/local/bin:/opt/homebrew/bin:$PATH"
+
+# 检查Rust是否安装
+if ! command -v cargo &> /dev/null; then
+    echo -e "${RED}错误: 未找到 cargo (Rust)${NC}"
+    echo -e "${YELLOW}请访问 https://rustup.rs/ 安装 Rust${NC}"
+    exit 1
+fi
+
+# 检查libtypst目录是否存在
+if [ ! -d "$RUST_DIR" ]; then
+    echo -e "${YELLOW}未找到 libtypst 目录，正在从GitHub克隆...${NC}"
+    cd "$PROJECT_DIR"
+    git clone https://github.com/WangHaoZhengMing/libtypst.git
+    if [ $? -ne 0 ]; then
+        echo -e "${RED}克隆失败，请检查网络连接${NC}"
+        exit 1
+    fi
+fi
+
+# 进入Rust项目目录
+cd "$RUST_DIR"
+
+# 检查是否需要重新编译
+# 如果libs目录存在且包含libtypst_c.a，检查是否需要更新
+if [ -f "$OUTPUT_DIR/libtypst_c.a" ]; then
+    # 检查源代码是否有更新
+    if [ "$OUTPUT_DIR/libtypst_c.a" -nt "Cargo.toml" ] && [ "$OUTPUT_DIR/libtypst_c.a" -nt "src/lib.rs" ]; then
+        echo -e "${GREEN}libtypst 已是最新版本，跳过编译${NC}"
+        exit 0
+    fi
+fi
+
+echo -e "${GREEN}编译 libtypst (Release 模式，macOS Universal Binary)...${NC}"
+
+# 安装必要的target（如果还没安装）
+rustup target add x86_64-apple-darwin 2>/dev/null || true
+rustup target add aarch64-apple-darwin 2>/dev/null || true
+
+# 编译 x86_64 版本
+echo -e "${YELLOW}编译 x86_64 版本...${NC}"
+cargo build --release --target x86_64-apple-darwin
+
+# 编译 aarch64 版本  
+echo -e "${YELLOW}编译 aarch64 (Apple Silicon) 版本...${NC}"
+cargo build --release --target aarch64-apple-darwin
+
+# 创建输出目录
+mkdir -p "$OUTPUT_DIR"
+mkdir -p "$OUTPUT_DIR/include"
+
+# 使用 lipo 合并成 Universal Binary
+echo -e "${YELLOW}使用 lipo 创建 Universal Binary...${NC}"
+lipo -create \
+    "$RUST_DIR/target/x86_64-apple-darwin/release/libtypst_c.a" \
+    "$RUST_DIR/target/aarch64-apple-darwin/release/libtypst_c.a" \
+    -output "$OUTPUT_DIR/libtypst_c.a"
+
+# 复制头文件
+if [ -f "$RUST_DIR/include/typst_c.h" ]; then
+    cp "$RUST_DIR/include/typst_c.h" "$OUTPUT_DIR/include/"
+    echo -e "${GREEN}已复制头文件到 libs/include/${NC}"
+elif [ -f "$RUST_DIR/target/release/typst_c.h" ]; then
+    cp "$RUST_DIR/target/release/typst_c.h" "$OUTPUT_DIR/include/"
+    echo -e "${GREEN}已复制头文件到 libs/include/${NC}"
+fi
+
+# 验证输出
+if [ -f "$OUTPUT_DIR/libtypst_c.a" ]; then
+    echo -e "${GREEN}✓ 编译成功！${NC}"
+    echo -e "${GREEN}  静态库: $OUTPUT_DIR/libtypst_c.a${NC}"
+    
+    # 显示库的架构信息
+    echo -e "${YELLOW}库架构信息:${NC}"
+    lipo -info "$OUTPUT_DIR/libtypst_c.a"
+    
+    # 显示文件大小
+    SIZE=$(du -h "$OUTPUT_DIR/libtypst_c.a" | cut -f1)
+    echo -e "${GREEN}  文件大小: $SIZE${NC}"
+else
+    echo -e "${RED}✗ 编译失败${NC}"
+    exit 1
+fi
+
+echo -e "${GREEN}===== 编译完成 =====${NC}"
