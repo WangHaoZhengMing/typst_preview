@@ -158,7 +158,7 @@ source $HOME/.cargo/env
 2. Check Build Settings → Header Search Paths includes `$(PROJECT_DIR)/libs/include`
 
 ### Q: More issues?
-**A:** See the detailed troubleshooting guide: [scripts/README_BUILD.md](scripts/README_BUILD.md#-故障排除)
+**A:** See the detailed troubleshooting guide: [scripts/README_BUILD.md](scripts/README_BUILD.md)
 
 ## ⚠️ Known Issues
 
