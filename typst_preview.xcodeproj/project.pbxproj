@@ -78,6 +78,7 @@
 		856712142F0E8AFA00BA6FA3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreviewViewController.xib; sourceTree = "<group>"; };
 		856712162F0E8AFA00BA6FA3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		856712172F0E8AFA00BA6FA3 /* typst_quick_exten.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = typst_quick_exten.entitlements; sourceTree = "<group>"; };
+		B147ED5A2F5A918B009B2A88 /* typst-preview-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "typst-preview-Info.plist"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,6 +140,7 @@
 		856711DA2F0E8AC500BA6FA3 /* typst_preview */ = {
 			isa = PBXGroup;
 			children = (
+				B147ED5A2F5A918B009B2A88 /* typst-preview-Info.plist */,
 				856711DB2F0E8AC500BA6FA3 /* typst_previewApp.swift */,
 				856711DD2F0E8AC500BA6FA3 /* ContentView.swift */,
 				856711DF2F0E8AC600BA6FA3 /* Assets.xcassets */,
@@ -585,6 +587,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/libs/include/**";
+				INFOPLIST_FILE = "typst-preview-Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = UTImportedTypeDeclarations;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -625,6 +629,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/libs/include/**";
+				INFOPLIST_FILE = "typst-preview-Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = UTImportedTypeDeclarations;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
