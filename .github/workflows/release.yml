@@ -29,6 +29,8 @@ jobs:
         targets: ${{ matrix.rust_target }}
 
     - name: Setup Project
+      env:
+        ARCHS: ${{ matrix.arch }}
       run: |
         chmod +x scripts/*.sh
         ./scripts/setup_project.sh || true
