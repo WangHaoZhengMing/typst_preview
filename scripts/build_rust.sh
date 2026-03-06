@@ -53,13 +53,21 @@ if [ -f "$OUTPUT_DIR/libtypst_c.a" ]; then
 fi
 
 # 1. 检测当前的 CPU 架构并设置对应的 Rust Target
-ARCH=$(uname -m)
-if [ "$ARCH" = "arm64" ]; then
+#优先尝试使用 Xcode 传入的 ARCHS
+if [ -n "$ARCHS" ]; then
+    ARCH="$ARCHS"
+    echo -e "${GREEN}使用 Xcode 传入的架构: $ARCH${NC}"
+else
+    ARCH=$(uname -m)
+    echo -e "${GREEN}使用宿主机架构: $ARCH${NC}"
+fi
+
+if [[ "$ARCH" == *"arm64"* ]]; then
     RUST_TARGET="aarch64-apple-darwin"
-    echo -e "${GREEN}检测到 Apple Silicon (arm64) 架构${NC}"
-elif [ "$ARCH" = "x86_64" ]; then
+    echo -e "${GREEN}设置为 Apple Silicon (arm64) Target: $RUST_TARGET${NC}"
+elif [[ "$ARCH" == *"x86_64"* ]]; then
     RUST_TARGET="x86_64-apple-darwin"
-    echo -e "${GREEN}检测到 Intel (x86_64) 架构${NC}"
+    echo -e "${GREEN}设置为 Intel (x86_64) Target: $RUST_TARGET${NC}"
 else
     echo -e "${RED}错误: 未知的 CPU 架构 ($ARCH)${NC}"
     exit 1
