@@ -1,0 +1,56 @@
+name: Build and Release macOS App
+
+on:
+  push:
+    tags:
+      - 'v*' # Trigger on version tags like v1.0.0
+
+jobs:
+  build:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        arch: [x86_64, arm64]
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Install Rust Toolchain
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        targets: ${{ matrix.arch }}-apple-darwin
+
+    - name: Setup Project
+      run: |
+        chmod +x scripts/*.sh
+        ./scripts/setup_project.sh || true
+
+    - name: Build Xcode Project (${{ matrix.arch }})
+      run: |
+        xcodebuild -project typst_preview.xcodeproj \
+          -scheme typst_preview \
+          -configuration Release \
+          -derivedDataPath build \
+          ARCHS=${{ matrix.arch }} \
+          ONLY_ACTIVE_ARCH=YES \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGNING_ALLOWED=NO \
+          clean build
+
+    - name: Package App (${{ matrix.arch }})
+      run: |
+        mkdir -p Payload_${{ matrix.arch }}
+        cp -R build/Build/Products/Release/typst_preview.app Payload_${{ matrix.arch }}/
+        zip -r typst_preview_${{ matrix.arch }}.zip Payload_${{ matrix.arch }}
+        
+    - name: Create Release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: typst_preview_${{ matrix.arch }}.zip
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
