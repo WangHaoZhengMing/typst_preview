@@ -20,7 +20,6 @@
 		856712152F0E8AFA00BA6FA3 /* PreviewViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 856712132F0E8AFA00BA6FA3 /* PreviewViewController.xib */; };
 		8567121A2F0E8AFA00BA6FA3 /* typst_quick_exten.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 8567120A2F0E8AFA00BA6FA3 /* typst_quick_exten.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		85B7DEE22F5C509D004BA39E /* DownloaderDaemon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85B7DEE12F5C509D004BA39E /* DownloaderDaemon.swift */; };
-		85B7DEE42F5C50D4004BA39E /* Placeholder.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 85B7DEE32F5C50D4004BA39E /* Placeholder.pdf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -81,7 +80,6 @@
 		856712162F0E8AFA00BA6FA3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		856712172F0E8AFA00BA6FA3 /* typst_quick_exten.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = typst_quick_exten.entitlements; sourceTree = "<group>"; };
 		85B7DEE12F5C509D004BA39E /* DownloaderDaemon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DownloaderDaemon.swift; sourceTree = "<group>"; };
-		85B7DEE32F5C50D4004BA39E /* Placeholder.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = Placeholder.pdf; sourceTree = "<group>"; };
 		B147ED5A2F5A918B009B2A88 /* typst-preview-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "typst-preview-Info.plist"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -193,7 +191,6 @@
 			children = (
 				8567120F2F0E8AFA00BA6FA3 /* PreviewViewController.swift */,
 				856712112F0E8AFA00BA6FA3 /* PreviewProvider.swift */,
-				85B7DEE32F5C50D4004BA39E /* Placeholder.pdf */,
 				856712132F0E8AFA00BA6FA3 /* PreviewViewController.xib */,
 				856712162F0E8AFA00BA6FA3 /* Info.plist */,
 				856712172F0E8AFA00BA6FA3 /* typst_quick_exten.entitlements */,
@@ -353,7 +350,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				85B7DEE42F5C50D4004BA39E /* Placeholder.pdf in Resources */,
 				856712152F0E8AFA00BA6FA3 /* PreviewViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

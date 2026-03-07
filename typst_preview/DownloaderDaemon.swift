@@ -10,6 +10,20 @@ private func realUserHomeDirectory() -> String {
     return String(cString: home)
 }
 
+struct PackageDescriptor: Identifiable, Hashable {
+    let namespace: String
+    let package: String
+    let version: String
+
+    var id: String {
+        "\(namespace)/\(package):\(version)"
+    }
+
+    var displayName: String {
+        "@\(namespace)/\(package):\(version)"
+    }
+}
+
 class DownloaderDaemon: ObservableObject {
     private let groupIdentifier = "group.typst.preview"
     private let extensionBundleIdentifier = "test.typst-preview.typst-quick-exten"
@@ -20,6 +34,12 @@ class DownloaderDaemon: ObservableObject {
     private var pollCount: UInt64 = 0
     private var lastProcessedRequestID: String?
     private let packageImportPattern = "@([\\w\\-]+)/([\\w\\-]+)(?::([\\d\\.]+))?"
+    @Published private(set) var currentPackage: PackageDescriptor?
+    @Published private(set) var queuedPackages: [PackageDescriptor] = []
+    @Published private(set) var installedPackages: [PackageDescriptor] = []
+    @Published private(set) var lastError: String?
+    @Published private(set) var lastEvent: String = "等待新请求"
+    @Published private(set) var lastRequestAt: Date?
 
     init() {
         let timer = DispatchSource.makeTimerSource(queue: pollQueue)
@@ -29,10 +49,12 @@ class DownloaderDaemon: ObservableObject {
         }
         timer.resume()
         pollTimer = timer
+        refreshInstalledPackages()
         pollQueue.async { [weak self] in
             self?.checkPendingDownloads()
         }
         logger.notice("DownloaderDaemon started, polling every 2 seconds.")
+        updateEvent("后台服务已启动")
     }
 
     deinit {
@@ -54,7 +76,9 @@ class DownloaderDaemon: ObservableObject {
         if access(pendingURL.path, R_OK) != 0 {
             let code = errno
             if code == EACCES || code == EPERM {
+                let message = "请求文件不可读: errno \(code)"
                 logger.error("Pending downloads path is not readable: \(pendingURL.path, privacy: .public), errno \(code).")
+                updateError(message)
                 return
             }
         }
@@ -72,6 +96,7 @@ class DownloaderDaemon: ObservableObject {
             data = try Data(contentsOf: pendingURL)
         } catch {
             logger.error("Failed to read pending downloads file: \(error.localizedDescription, privacy: .public)")
+            updateError("读取请求失败: \(error.localizedDescription)")
             return
         }
 
@@ -79,11 +104,13 @@ class DownloaderDaemon: ObservableObject {
         do {
             guard let parsed = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
                 logger.error("Pending downloads file has unexpected JSON shape.")
+                updateError("请求文件格式不正确")
                 return
             }
             json = parsed
         } catch {
             logger.error("Failed to parse pending downloads file: \(error.localizedDescription, privacy: .public)")
+            updateError("解析请求失败: \(error.localizedDescription)")
             return
         }
 
@@ -102,6 +129,11 @@ class DownloaderDaemon: ObservableObject {
         }
 
         lastProcessedRequestID = requestID
+        updateQueuedPackages(queue)
+        updateEvent("收到 \(queue.count) 个下载请求")
+        DispatchQueue.main.async {
+            self.lastRequestAt = Date(timeIntervalSince1970: timestamp)
+        }
 
         logger.notice("Found \(queue.count) pending download request(s).")
         processQueue(queue)
@@ -111,12 +143,14 @@ class DownloaderDaemon: ObservableObject {
         let queue = packages.map { pkg -> [String: Any] in
             return ["namespace": pkg.namespace, "package": pkg.package, "version": pkg.version]
         }
+        updateQueuedPackages(queue)
         processQueue(queue)
     }
     
     private func processQueue(_ queue: [[String: Any]]) {
         guard !isDownloading else { return }
         isDownloading = true
+        updateError(nil)
         
         Task {
             var remainingQueue = queue
@@ -124,6 +158,7 @@ class DownloaderDaemon: ObservableObject {
 
             while let first = remainingQueue.first {
                 remainingQueue.removeFirst()
+                updateQueuedPackages(remainingQueue)
 
                 guard let currentPackageKey = packageKey(for: first), !seenPackages.contains(currentPackageKey) else {
                     continue
@@ -146,6 +181,19 @@ class DownloaderDaemon: ObservableObject {
             self.pollQueue.async {
                 self.isDownloading = false
             }
+            self.updateCurrentPackage(nil)
+            self.updateQueuedPackages([])
+            self.updateEvent("下载队列已完成")
+            self.refreshInstalledPackages()
+        }
+    }
+
+    func refreshInstalledPackages() {
+        pollQueue.async {
+            let packages = self.loadInstalledPackages()
+            DispatchQueue.main.async {
+                self.installedPackages = packages
+            }
         }
     }
 
@@ -154,6 +202,13 @@ class DownloaderDaemon: ObservableObject {
               let package = packageInfo["package"] as? String,
               let version = packageInfo["version"] as? String else { return nil }
         return "\(namespace)/\(package):\(version)"
+    }
+
+    private func descriptor(for packageInfo: [String: Any]) -> PackageDescriptor? {
+        guard let namespace = packageInfo["namespace"] as? String,
+              let package = packageInfo["package"] as? String,
+              let version = packageInfo["version"] as? String else { return nil }
+        return PackageDescriptor(namespace: namespace, package: package, version: version)
     }
 
     private func packageDirectory(namespace: String, package: String, version: String) -> URL? {
@@ -175,6 +230,7 @@ class DownloaderDaemon: ObservableObject {
 
         var isDir: ObjCBool = false
         if FileManager.default.fileExists(atPath: packageDir.path, isDirectory: &isDir), isDir.boolValue {
+            updateEvent("已存在 \(namespace)/\(package):\(version)")
             return packageDir
         }
 
@@ -264,12 +320,15 @@ class DownloaderDaemon: ObservableObject {
         guard let url = URL(string: urlString) else { return false }
         
         logger.notice("Starting download for @\(namespace)/\(package):\(version)")
+        updateCurrentPackage(PackageDescriptor(namespace: namespace, package: package, version: version))
+        updateEvent("正在下载 @\(namespace)/\(package):\(version)")
         
         do {
             let (data, response) = try await URLSession.shared.data(from: url)
             guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
                 let status = (response as? HTTPURLResponse)?.statusCode ?? -1
                 logger.error("Failed to download @\(namespace)/\(package):\(version), status \(status).")
+                updateError("下载失败 @\(namespace)/\(package):\(version), HTTP \(status)")
                 return false
             }
             try data.write(to: tempDownloadURL)
@@ -286,17 +345,76 @@ class DownloaderDaemon: ObservableObject {
             guard process.terminationStatus == 0 else {
                 logger.error("tar extraction failed for @\(namespace)/\(package):\(version), exit code \(process.terminationStatus).")
                 try? FileManager.default.removeItem(at: tempDownloadURL)
+                updateError("解压失败 @\(namespace)/\(package):\(version), exit code \(process.terminationStatus)")
                 return false
             }
             
             try FileManager.default.removeItem(at: tempDownloadURL)
             logger.notice("Successfully installed @\(namespace)/\(package):\(version)")
+            updateEvent("已安装 @\(namespace)/\(package):\(version)")
+            refreshInstalledPackages()
             return true
         } catch {
             logger.error("Error during download/extraction: \(error.localizedDescription)")
             // Cleanup on failure
             try? FileManager.default.removeItem(at: tempDownloadURL)
+            updateError("处理失败 @\(namespace)/\(package):\(version): \(error.localizedDescription)")
             return false
         }
+    }
+
+    private func updateQueuedPackages(_ queue: [[String: Any]]) {
+        let packages = queue.compactMap { descriptor(for: $0) }
+        DispatchQueue.main.async {
+            self.queuedPackages = packages
+        }
+    }
+
+    private func updateCurrentPackage(_ package: PackageDescriptor?) {
+        DispatchQueue.main.async {
+            self.currentPackage = package
+        }
+    }
+
+    private func updateError(_ message: String?) {
+        DispatchQueue.main.async {
+            self.lastError = message
+        }
+    }
+
+    private func updateEvent(_ message: String) {
+        DispatchQueue.main.async {
+            self.lastEvent = message
+        }
+    }
+
+    private func loadInstalledPackages() -> [PackageDescriptor] {
+        guard let groupDir = sharedGroupDirectory() else { return [] }
+        let packagesRoot = groupDir.appendingPathComponent("packages")
+        guard let namespaceDirs = try? FileManager.default.contentsOfDirectory(at: packagesRoot, includingPropertiesForKeys: [.isDirectoryKey], options: [.skipsHiddenFiles]) else {
+            return []
+        }
+
+        var packages: [PackageDescriptor] = []
+
+        for namespaceDir in namespaceDirs {
+            let namespace = namespaceDir.lastPathComponent
+            guard let packageDirs = try? FileManager.default.contentsOfDirectory(at: namespaceDir, includingPropertiesForKeys: [.isDirectoryKey], options: [.skipsHiddenFiles]) else {
+                continue
+            }
+
+            for packageDir in packageDirs {
+                let package = packageDir.lastPathComponent
+                guard let versionDirs = try? FileManager.default.contentsOfDirectory(at: packageDir, includingPropertiesForKeys: [.isDirectoryKey], options: [.skipsHiddenFiles]) else {
+                    continue
+                }
+
+                for versionDir in versionDirs {
+                    packages.append(PackageDescriptor(namespace: namespace, package: package, version: versionDir.lastPathComponent))
+                }
+            }
+        }
+
+        return packages.sorted { $0.id < $1.id }
     }
 }
