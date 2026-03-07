@@ -9,9 +9,13 @@ import SwiftUI
 
 @main
 struct typst_previewApp: App {
+    @StateObject private var downloaderDaemon = DownloaderDaemon()
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(downloaderDaemon)
         }
+        .handlesExternalEvents(matching: ["*"])
     }
 }

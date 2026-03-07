@@ -19,6 +19,8 @@
 		856712122F0E8AFA00BA6FA3 /* PreviewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 856712112F0E8AFA00BA6FA3 /* PreviewProvider.swift */; };
 		856712152F0E8AFA00BA6FA3 /* PreviewViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 856712132F0E8AFA00BA6FA3 /* PreviewViewController.xib */; };
 		8567121A2F0E8AFA00BA6FA3 /* typst_quick_exten.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 8567120A2F0E8AFA00BA6FA3 /* typst_quick_exten.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		85B7DEE22F5C509D004BA39E /* DownloaderDaemon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85B7DEE12F5C509D004BA39E /* DownloaderDaemon.swift */; };
+		85B7DEE42F5C50D4004BA39E /* Placeholder.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 85B7DEE32F5C50D4004BA39E /* Placeholder.pdf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -78,6 +80,8 @@
 		856712142F0E8AFA00BA6FA3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreviewViewController.xib; sourceTree = "<group>"; };
 		856712162F0E8AFA00BA6FA3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		856712172F0E8AFA00BA6FA3 /* typst_quick_exten.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = typst_quick_exten.entitlements; sourceTree = "<group>"; };
+		85B7DEE12F5C509D004BA39E /* DownloaderDaemon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DownloaderDaemon.swift; sourceTree = "<group>"; };
+		85B7DEE32F5C50D4004BA39E /* Placeholder.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = Placeholder.pdf; sourceTree = "<group>"; };
 		B147ED5A2F5A918B009B2A88 /* typst-preview-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "typst-preview-Info.plist"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -142,6 +146,7 @@
 			children = (
 				B147ED5A2F5A918B009B2A88 /* typst-preview-Info.plist */,
 				856711DB2F0E8AC500BA6FA3 /* typst_previewApp.swift */,
+				85B7DEE12F5C509D004BA39E /* DownloaderDaemon.swift */,
 				856711DD2F0E8AC500BA6FA3 /* ContentView.swift */,
 				856711DF2F0E8AC600BA6FA3 /* Assets.xcassets */,
 				856711E42F0E8AC600BA6FA3 /* typst_preview.entitlements */,
@@ -188,6 +193,7 @@
 			children = (
 				8567120F2F0E8AFA00BA6FA3 /* PreviewViewController.swift */,
 				856712112F0E8AFA00BA6FA3 /* PreviewProvider.swift */,
+				85B7DEE32F5C50D4004BA39E /* Placeholder.pdf */,
 				856712132F0E8AFA00BA6FA3 /* PreviewViewController.xib */,
 				856712162F0E8AFA00BA6FA3 /* Info.plist */,
 				856712172F0E8AFA00BA6FA3 /* typst_quick_exten.entitlements */,
@@ -347,6 +353,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				85B7DEE42F5C50D4004BA39E /* Placeholder.pdf in Resources */,
 				856712152F0E8AFA00BA6FA3 /* PreviewViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -398,6 +405,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				856711DE2F0E8AC500BA6FA3 /* ContentView.swift in Sources */,
+				85B7DEE22F5C509D004BA39E /* DownloaderDaemon.swift in Sources */,
 				856711DC2F0E8AC500BA6FA3 /* typst_previewApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -580,10 +588,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = typst_preview/typst_preview.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"typst_preview/Preview Content\"";
+				DEVELOPMENT_TEAM = 6GUF5659T6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/libs/include/**";
@@ -609,6 +619,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "test.typst-preview";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/typst_preview/typst_preview-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -622,10 +633,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = typst_preview/typst_preview.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"typst_preview/Preview Content\"";
+				DEVELOPMENT_TEAM = 6GUF5659T6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/libs/include/**";
@@ -651,6 +664,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "test.typst-preview";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/typst_preview/typst_preview-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -662,6 +676,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -680,6 +695,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -729,8 +745,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = typst_quick_exten/typst_quick_exten.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6GUF5659T6;
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/libs/include";
 				INFOPLIST_FILE = typst_quick_exten/Info.plist;
@@ -768,8 +786,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = typst_quick_exten/typst_quick_exten.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6GUF5659T6;
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/libs/include";
 				INFOPLIST_FILE = typst_quick_exten/Info.plist;

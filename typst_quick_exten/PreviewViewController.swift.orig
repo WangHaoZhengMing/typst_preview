@@ -85,48 +85,41 @@ class PreviewViewController: NSViewController, QLPreviewingController {
     }
 
     func requestPackageDownload(missingPackages: [(namespace: String, package: String, version: String)]) {
-        // Write to the extension's OWN private container — the only writable destination for QL extensions.
-        // The host app daemon reads this using its absolute-path read-only exception entitlement.
-        let pendingURL = URL(fileURLWithPath: NSHomeDirectory())
-            .appendingPathComponent("pending_downloads.json")
-
-        let queue = missingPackages.map { pkg -> [String: Any] in
-            return ["namespace": pkg.namespace, "package": pkg.package, "version": pkg.version]
+        guard let groupDir = sharedGroupDirectory() else { return }
+        let requestsURL = groupDir.appendingPathComponent("requests.json")
+        
+        var queue = [[String: Any]]()
+        
+        if let data = try? Data(contentsOf: requestsURL),
+           let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+           let existingQueue = json["queue"] as? [[String: Any]] {
+               queue = existingQueue
         }
-        let jsonDict: [String: Any] = ["queue": queue, "timestamp": Date().timeIntervalSince1970]
-
-        if let data = try? JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted) {
-            // Non-atomic write: avoids creating a temp file, which would trigger file-write-create
-            try? data.write(to: pendingURL)
+        
+        for pkg in missingPackages {
+            let item: [String: Any] = [
+                "namespace": pkg.namespace,
+                "package": pkg.package,
+                "version": pkg.version,
+                "time": Date().timeIntervalSince1970
+            ]
+            let exists = queue.contains { dict in
+                return (dict["namespace"] as? String) == pkg.namespace &&
+                       (dict["package"] as? String) == pkg.package &&
+                       (dict["version"] as? String) == pkg.version
+            }
+            if !exists {
+                queue.append(item)
+            }
         }
-    }
-
-    func missingPackagesFromCompileMessage(_ message: String) -> [(namespace: String, package: String, version: String)] {
-        let pattern = #"/packages/([^/]+)/([^/]+)/([^/)"\s]+)"#
-        guard let regex = try? NSRegularExpression(pattern: pattern) else { return [] }
-
-        let range = NSRange(message.startIndex..<message.endIndex, in: message)
-        let matches = regex.matches(in: message, options: [], range: range)
-
-        var packages: [(namespace: String, package: String, version: String)] = []
-        var seen = Set<String>()
-
-        for match in matches {
-            guard let namespaceRange = Range(match.range(at: 1), in: message),
-                  let packageRange = Range(match.range(at: 2), in: message),
-                  let versionRange = Range(match.range(at: 3), in: message) else { continue }
-
-            let namespace = String(message[namespaceRange])
-            let package = String(message[packageRange])
-            let version = String(message[versionRange])
-            let key = "\(namespace)/\(package):\(version)"
-
-            guard !seen.contains(key) else { continue }
-            seen.insert(key)
-            packages.append((namespace: namespace, package: package, version: version))
+        
+        let jsonDict: [String: Any] = ["queue": queue]
+        if let newData = try? JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted) {
+            try? newData.write(to: requestsURL, options: .atomic)
+            
+            let distributedNotificationCenter = DistributedNotificationCenter.default()
+            distributedNotificationCenter.postNotificationName(NSNotification.Name("TypstPackageDownloadRequest"), object: nil, userInfo: nil, deliverImmediately: true)
         }
-
-        return packages
     }
     
     func generateCacheHash(fileURL: URL) -> String? {
@@ -174,25 +167,6 @@ class PreviewViewController: NSViewController, QLPreviewingController {
                 }
             } catch {
                 DispatchQueue.main.async {
-                    if case let TypstPreviewError.compileFailed(_, message) = error,
-                       let strongSelf = self {
-                        let missingPackages = strongSelf
-                            .missingPackagesFromCompileMessage(message)
-                            .filter {
-                                !strongSelf.isPackageInstalled(namespace: $0.namespace, package: $0.package, version: $0.version)
-                            }
-
-                        if !missingPackages.isEmpty {
-                            strongSelf.requestPackageDownload(missingPackages: missingPackages)
-                            strongSelf.pdfView.isHidden = true
-                            strongSelf.infoLabel.isHidden = false
-                            let missingStr = missingPackages.map { "@\($0.namespace)/\($0.package):\($0.version)" }.joined(separator: ", ")
-                            strongSelf.infoLabel.stringValue = "Downloading transitive packages...\n\(missingStr)"
-                            handler(nil)
-                            return
-                        }
-                    }
-
                     self?.pdfView.isHidden = true
                     self?.infoLabel.isHidden = false
                     self?.infoLabel.stringValue = "Compilation Failed:\n\(error.localizedDescription)"
@@ -209,7 +183,8 @@ class PreviewViewController: NSViewController, QLPreviewingController {
             }
         }
         
-        guard let cacheHash = generateCacheHash(fileURL: inputURL) else {
+        guard let cacheHash = generateCacheHash(fileURL: inputURL),
+              let groupDir = sharedGroupDirectory() else {
             throw TypstPreviewError.unknown
         }
         
