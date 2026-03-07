@@ -29,10 +29,16 @@ if ! command -v cargo &> /dev/null; then
     exit 1
 fi
 
-# 检查libtypst目录是否存在
-if [ ! -d "$RUST_DIR" ]; then
-    echo -e "${YELLOW}未找到 libtypst 目录，正在从GitHub克隆...${NC}"
+# 检查libtypst目录是否存在且包含 Cargo.toml
+if [ ! -d "$RUST_DIR" ] || [ ! -f "$RUST_DIR/Cargo.toml" ]; then
+    echo -e "${YELLOW}未找到完整的 libtypst 项目，正在从GitHub克隆...${NC}"
     cd "$PROJECT_DIR"
+    
+    # 如果目录存在但并不完整，先删除它以避免 git clone 报错
+    if [ -d "$RUST_DIR" ]; then
+        rm -rf "$RUST_DIR"
+    fi
+    
     git clone https://github.com/WangHaoZhengMing/libtypst.git
     if [ $? -ne 0 ]; then
         echo -e "${RED}克隆失败，请检查网络连接${NC}"

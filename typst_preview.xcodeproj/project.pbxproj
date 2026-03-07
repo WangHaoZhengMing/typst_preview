@@ -388,7 +388,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n${PROJECT_DIR}/scripts/build_rust.sh\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\necho \"正在编译 libtypst...\"\n\"${PROJECT_DIR}/scripts/build_rust.sh\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

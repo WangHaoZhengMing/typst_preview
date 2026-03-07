@@ -80,7 +80,6 @@ Press `Cmd+B` in Xcode to build. The build script will automatically compile the
 typst_preview/
 ├── scripts/
 │   ├── build_rust.sh          # Automatic Rust build script (called by Xcode)
-│   ├── setup_project.sh       # Project initialization script
 │   ├── XCODE_SETUP.md         # Detailed Xcode configuration guide
 │   └── README_BUILD.md        # Build documentation and troubleshooting
 ├── libtypst/                  # Git submodule: Rust bindings for Typst
