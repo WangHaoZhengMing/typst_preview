@@ -1,130 +1,137 @@
-# Typst Preview - 编译说明
+# Typst Preview - Build Guide
 
-## 🚀 快速开始
+This document describes the current build flow for Typst Preview.
 
-### 首次设置
+The project is made of three cooperating pieces:
 
-1. **安装 Rust**（如果还没安装）
-   ```bash
-   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-   source $HOME/.cargo/env
-   ```
+- the Rust static library in `libtypst/`
+- the macOS host app in `typst_preview/`
+- the Quick Look extension in `typst_quick_exten/`
 
-2. **运行初始化脚本**
-   ```bash
-   cd /Users/hua/Documents/typst_preview
-   chmod +x scripts/*.sh
-   ./scripts/setup_project.sh
-   ```
+The Rust library handles Typst compilation. The host app handles package download and cache management. The Quick Look extension renders previews in Finder.
 
-3. **在 Xcode 中打开项目**
-   ```bash
-   open typst_preview.xcodeproj
-   ```
+## Quick Start
 
-4. **直接编译运行** - Xcode 会自动编译 Rust 代码！
-
----
-
-## 📋 工作原理
-
-### 自动化编译流程
-
-当你在 Xcode 中按下 `Cmd+B` 编译时：
-
-1. **Pre-build Script** 自动运行 `scripts/build_rust.sh`
-2. 脚本检查 `libtypst` 目录是否存在
-   - 不存在：自动从 GitHub 克隆
-   - 存在：检查是否需要重新编译
-3. 使用 `cargo` 编译 Rust 代码为两个架构：
-   - `x86_64-apple-darwin` (Intel Mac)
-   - `aarch64-apple-darwin` (Apple Silicon)
-4. 使用 `lipo` 合并为 Universal Binary
-5. 输出到 `libs/libtypst_c.a`
-6. 复制头文件到 `libs/include/typst_c.h`
-7. Xcode 继续编译 Swift 代码并链接静态库
-
-### 目录结构
-
-```
-typst_preview/
-├── scripts/
-│   ├── build_rust.sh       # Rust 自动编译脚本
-│   └── setup_project.sh    # 项目初始化脚本
-├── libtypst/               # Rust 源代码 (git clone)
-│   ├── Cargo.toml
-│   ├── src/
-│   └── include/
-├── libs/                   # 编译输出 (自动生成，不提交到 git)
-│   ├── libtypst_c.a       # Universal Binary 静态库
-│   └── include/
-│       └── typst_c.h      # C 头文件
-└── typst_preview/          # Swift 源代码
-    └── ...
-```
-
----
-
-## 🔧 Xcode 配置
-
-### Build Phases 配置
-
-1. 打开 Xcode 项目
-2. 选择 Target → Build Phases
-3. 点击 `+` → New Run Script Phase
-4. 拖动到最顶部（在 "Compile Sources" 之前）
-5. 添加以下脚本：
+### 1. Install Rust
 
 ```bash
-# 自动编译 Rust libtypst
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+source "$HOME/.cargo/env"
+```
+
+### 2. Build the Rust library
+
+From the repository root:
+
+```bash
+chmod +x scripts/*.sh
+./scripts/build_rust.sh
+```
+
+This generates:
+
+- `libs/libtypst_c.a`
+- `libs/include/typst_c.h`
+
+### 3. Open the Xcode project
+
+```bash
+open typst_preview.xcodeproj
+```
+
+### 4. Configure Xcode once
+
+Add a Run Script Phase before Swift compilation:
+
+```bash
 "${PROJECT_DIR}/scripts/build_rust.sh"
 ```
 
-6. 勾选 "Show environment variables in build log"（可选，用于调试）
+Recommended Build Settings:
 
-### Build Settings 配置
+- Header Search Paths: `$(PROJECT_DIR)/libs/include`
+- Library Search Paths: `$(PROJECT_DIR)/libs`
+- Other Linker Flags: `-ltypst_c -framework Security -framework CoreFoundation`
 
-1. **Header Search Paths**
-   - 添加：`$(PROJECT_DIR)/libs/include`
+Detailed steps are in [XCODE_SETUP.md](XCODE_SETUP.md).
 
-2. **Library Search Paths**
-   - 添加：`$(PROJECT_DIR)/libs`
+### 5. Run the host app target
 
-3. **Other Linker Flags**
-   - 添加：
-     ```
-     -ltypst_c
-     -framework Security
-     -framework CoreFoundation
-     ```
+The host app must be run at least once because it:
 
----
+- receives package download requests from the Quick Look extension
+- downloads missing Typst packages
+- installs them into the shared App Group cache
+- exposes status in its UI
 
-## 🛠️ 手动编译
+After that, Finder Quick Look can preview `.typ` files.
 
-如果需要单独编译 Rust 库：
+## Current Build Flow
 
-```bash
-# 编译 Rust 库
-./scripts/build_rust.sh
+### What `build_rust.sh` does
 
-# 或者进入 libtypst 目录手动编译
-cd libtypst
-cargo build --release --target x86_64-apple-darwin
-cargo build --release --target aarch64-apple-darwin
+When called from Xcode or manually, `scripts/build_rust.sh`:
 
-# 手动创建 Universal Binary
-lipo -create \
-    target/x86_64-apple-darwin/release/libtypst_c.a \
-    target/aarch64-apple-darwin/release/libtypst_c.a \
-    -output ../libs/libtypst_c.a
+1. resolves the project and Rust source directories
+2. loads Cargo into `PATH`
+3. checks whether `libtypst/` exists and contains `Cargo.toml`
+4. detects the current machine architecture
+5. builds the Rust static library for the current architecture
+6. copies the resulting library to `libs/libtypst_c.a`
+7. copies `typst_c.h` into `libs/include/`
+
+The script currently builds for the current architecture only, not as a universal binary.
+
+## Directory Layout
+
+```text
+typst_preview/
+├── libtypst/
+│   ├── include/
+│   │   └── typst_c.h
+│   ├── src/
+│   │   ├── ffi.rs
+│   │   ├── package.rs
+│   │   └── world.rs
+│   └── Cargo.toml
+├── libs/
+│   ├── libtypst_c.a
+│   └── include/
+│       └── typst_c.h
+├── scripts/
+│   ├── build_rust.sh
+│   ├── README_BUILD.md
+│   └── XCODE_SETUP.md
+├── typst_preview/
+│   ├── ContentView.swift
+│   ├── DownloaderDaemon.swift
+│   ├── typst_preview.entitlements
+│   └── typst_previewApp.swift
+└── typst_quick_exten/
+    ├── PreviewProvider.swift
+    ├── PreviewViewController.swift
+    ├── typst_quick_exten.entitlements
+    └── Info.plist
 ```
 
----
+## Manual Build Commands
 
-## 🔄 更新 libtypst
+### Rebuild the Rust library
 
-当 GitHub 仓库有更新时：
+```bash
+./scripts/build_rust.sh
+```
+
+### Build directly with Cargo
+
+```bash
+cd libtypst
+cargo build --release
+```
+
+If you build directly with Cargo, remember that Xcode links against the copied file in `libs/`, not the artifact in `target/`.
+
+## Updating `libtypst`
 
 ```bash
 cd libtypst
@@ -133,91 +140,71 @@ cd ..
 ./scripts/build_rust.sh
 ```
 
----
+## Package Download Runtime
 
-## 📝 注意事项
+The package workflow during preview is:
 
-1. **首次编译较慢** - Rust 编译需要下载依赖，首次可能需要 5-10 分钟
-2. **增量编译很快** - 后续编译只需几秒钟
-3. **不要提交 libs/ 目录** - 已在 `.gitignore` 中排除
-4. **不要提交 libtypst/target/** - 已在 `.gitignore` 中排除
-5. **需要网络连接** - 首次编译需要下载 Rust 依赖包
+1. Quick Look scans the Typst file for direct package imports
+2. if packages are missing, it writes a request into the extension sandbox
+3. the host app polls that request file
+4. the host app downloads packages into the App Group cache
+5. if downloaded packages reference other package versions in their `.typ` sources, those transitive dependencies are also downloaded
+6. Quick Look retries against the shared package cache
 
----
+Shared package cache root:
 
-## 🐛 故障排除
+```text
+~/Library/Group Containers/group.typst.preview/packages/
+```
 
-### 问题 1: `cargo: command not found`
+## Troubleshooting
 
-**解决方案：**
+### `cargo: command not found`
+
+Install Rust and load Cargo:
+
 ```bash
-# 安装 Rust
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-source $HOME/.cargo/env
-
-# 添加到 shell 配置
-echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> ~/.zshrc
-source ~/.zshrc
+source "$HOME/.cargo/env"
 ```
 
-### 问题 2: 编译失败 - 缺少 target
+### Xcode cannot find `typst_c.h`
 
-**解决方案：**
+Check:
+
+- `libs/include/typst_c.h` exists
+- Header Search Paths contains `$(PROJECT_DIR)/libs/include`
+
+### Xcode cannot link `libtypst_c.a`
+
+Check:
+
+- `libs/libtypst_c.a` exists
+- Library Search Paths contains `$(PROJECT_DIR)/libs`
+- Other Linker Flags contains `-ltypst_c -framework Security -framework CoreFoundation`
+
+### Quick Look works for simple files but fails for package-based files
+
+Make sure the host app is running. Package download is handled by the host app, not by the Quick Look extension directly.
+
+### Clean rebuild
+
 ```bash
-rustup target add x86_64-apple-darwin
-rustup target add aarch64-apple-darwin
-```
-
-### 问题 3: Xcode 找不到头文件
-
-**解决方案：**
-1. 确认 `libs/include/typst_c.h` 存在
-2. 检查 Xcode Build Settings → Header Search Paths
-3. 应该包含：`$(PROJECT_DIR)/libs/include`
-
-### 问题 4: 链接错误
-
-**解决方案：**
-1. 确认 `libs/libtypst_c.a` 存在
-2. 检查 Build Settings → Library Search Paths
-3. 检查 Other Linker Flags 包含：
-   ```
-   -ltypst_c -framework Security -framework CoreFoundation
-   ```
-
-### 问题 5: 想要清理重新编译
-
-**解决方案：**
-```bash
-# 清理 Rust 编译产物
 cd libtypst
 cargo clean
-
-# 清理输出目录
 cd ..
 rm -rf libs/
-
-# 重新编译
 ./scripts/build_rust.sh
 ```
 
----
+## Notes
 
-## 🎯 一键部署命令
+- The first Rust build is slow because dependencies must be downloaded and compiled.
+- Subsequent builds are much faster.
+- The host app UI shows current package, pending queue, installed packages, last event, and last error.
+- The current package workflow is designed around Typst package imports such as `@preview/...`.
 
-```bash
-# 完整的从零开始部署
-cd /Users/hua/Documents/typst_preview
-chmod +x scripts/*.sh
-./scripts/setup_project.sh
-open typst_preview.xcodeproj
-# 然后在 Xcode 中按 Cmd+B 编译
-```
+## Related Documents
 
----
-
-## 📚 相关资源
-
-- [libtypst GitHub 仓库](https://github.com/WangHaoZhengMing/libtypst)
-- [Rust 官方安装指南](https://rustup.rs/)
-- [Typst 官方文档](https://typst.app/)
+- [../README.md](../README.md)
+- [XCODE_SETUP.md](XCODE_SETUP.md)

@@ -1,125 +1,152 @@
 # Typst Preview - macOS Quick Look Extension
 
-A macOS Quick Look extension that integrates the [Typst](https://typst.app/) compiler, enabling native preview of `.typ` files directly in Finder.
+Typst Preview is a macOS Quick Look extension for `.typ` files backed by the [Typst](https://typst.app/) compiler through a Rust FFI bridge.
 
-[Typst](https://typst.app/) is a modern markup-based typesetting system designed as an alternative to LaTeX. This extension allows you to preview Typst documents in macOS Finder without opening them in an editor.
+The project contains two cooperating macOS targets:
 
-## ✨ Features
+- a Quick Look extension that renders Typst documents in Finder
+- a host app that downloads missing Typst packages into a shared cache and shows runtime status
 
-- 🔍 Quick Look preview for `.typ` Typst files
-- 🚀 Native macOS integration
-- 📦 Built-in Typst compiler (via Rust FFI)
-- 🎨 Fast preview generation
+This lets Finder preview Typst files directly, including documents that depend on `@preview/...` packages.
 
-## 📋 System Requirements
+## Features
+
+- Quick Look preview for `.typ` files in Finder
+- Rust-powered Typst compilation through a static library
+- Automatic package download through the host app
+- Shared package cache stored in an App Group container
+- Transitive dependency handling for Typst packages
+- Host app dashboard showing current downloads, queue state, errors, and installed packages
+
+## System Requirements
 
 - macOS 12.0+
 - Xcode 14.0+
-- Rust toolchain (installed via [rustup](https://rustup.rs/))
+- Rust toolchain installed via [rustup](https://rustup.rs/)
 
-## 🚀 Quick Start
+## Quick Start
 
-### 1. Clone the Repository
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/WangHaoZhengMing/typst_preview.git
 cd typst_preview
 ```
 
-### 2. Install Rust (if not already installed)
+### 2. Install Rust
 
 ```bash
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-source $HOME/.cargo/env
+source "$HOME/.cargo/env"
 ```
 
-### 3. Initialize the Project
-
-Run the setup script to clone dependencies and build the Rust library:
+### 3. Build the Rust library once
 
 ```bash
 chmod +x scripts/*.sh
-./scripts/setup_project.sh
+./scripts/build_rust.sh
 ```
 
-This will:
-- Clone the `libtypst` repository (Rust wrapper for Typst)
-- Add necessary Rust compilation targets
-- Build the Rust library for your architecture
-- Generate `libs/libtypst_c.a` static library and header files
+This generates:
 
-### 4. Open in Xcode
+- `libs/libtypst_c.a`
+- `libs/include/typst_c.h`
+
+### 4. Open the Xcode project
 
 ```bash
 open typst_preview.xcodeproj
 ```
 
-### 5. Configure Xcode Build Settings (First Time Only)
+### 5. Configure the Xcode build phase
 
-See detailed instructions: [scripts/XCODE_SETUP.md](scripts/XCODE_SETUP.md)
+See [scripts/XCODE_SETUP.md](scripts/XCODE_SETUP.md) for the full setup. The important part is adding a Run Script Phase before Swift compilation:
 
-**Quick configuration:**
-
-1. **Add Build Phase** (to run before compiling Swift code):
-   - Target → Build Phases → + → New Run Script Phase
-   - Add: `"${PROJECT_DIR}/scripts/build_rust.sh"`
-   - Move it to the top (before "Compile Sources")
-
-2. **Configure Build Settings**:
-   - **Header Search Paths**: `$(PROJECT_DIR)/libs/include`
-   - **Library Search Paths**: `$(PROJECT_DIR)/libs`
-   - **Other Linker Flags**: `-ltypst_c -framework Security -framework CoreFoundation`
-
-### 6. Build and Run
-
-Press `Cmd+B` in Xcode to build. The build script will automatically compile the Rust library if needed.
-
-## 📁 Project Structure
-
+```bash
+"${PROJECT_DIR}/scripts/build_rust.sh"
 ```
+
+Recommended build settings:
+
+- Header Search Paths: `$(PROJECT_DIR)/libs/include`
+- Library Search Paths: `$(PROJECT_DIR)/libs`
+- Other Linker Flags: `-ltypst_c -framework Security -framework CoreFoundation`
+
+### 6. Build and run the host app
+
+Run the `typst_preview` app target from Xcode at least once. The host app is responsible for:
+
+- polling Quick Look package requests
+- downloading missing packages
+- installing them into the shared cache
+- showing runtime status in its UI
+
+After that, Quick Look on a `.typ` file in Finder should work.
+
+## How Package Download Works
+
+When a Typst file imports packages that are not installed yet:
+
+1. the Quick Look extension detects the missing package
+2. it writes a request into its sandbox container
+3. the host app polls that request file
+4. the host app downloads the package into the App Group cache at `~/Library/Group Containers/group.typst.preview/packages/`
+5. if compilation reveals missing transitive package dependencies, they are requested and downloaded as well
+6. retrying Quick Look uses the cached packages and renders the preview
+
+In practice, the first preview of a package-heavy document may show a temporary downloading message. Subsequent previews use the installed cache.
+
+## Project Structure
+
+```text
 typst_preview/
-├── scripts/
-│   ├── build_rust.sh          # Automatic Rust build script (called by Xcode)
-│   ├── XCODE_SETUP.md         # Detailed Xcode configuration guide
-│   └── README_BUILD.md        # Build documentation and troubleshooting
-├── libtypst/                  # Git submodule: Rust bindings for Typst
-├── libs/                      # Build output (auto-generated, not committed)
-│   ├── libtypst_c.a          # Static library (current architecture)
+├── libtypst/                    # Rust Typst bridge and package resolution logic
+│   ├── include/
+│   │   └── typst_c.h
+│   ├── src/
+│   │   ├── ffi.rs
+│   │   ├── package.rs
+│   │   └── world.rs
+│   └── Cargo.toml
+├── libs/                        # Generated Rust build output
+│   ├── libtypst_c.a
 │   └── include/
-│       └── typst_c.h         # C header file
-├── typst_preview/             # Main Swift application
-│   ├── typst_previewApp.swift
+│       └── typst_c.h
+├── scripts/
+│   ├── build_rust.sh
+│   ├── README_BUILD.md
+│   └── XCODE_SETUP.md
+├── typst_preview/               # Host app
 │   ├── ContentView.swift
-│   └── typst_preview-Bridging-Header.h
-├── typst_quick_exten/         # Quick Look extension implementation
-│   ├── PreviewViewController.swift
+│   ├── DownloaderDaemon.swift
+│   ├── typst_preview.entitlements
+│   └── typst_previewApp.swift
+├── typst_quick_exten/           # Quick Look extension
 │   ├── PreviewProvider.swift
+│   ├── PreviewViewController.swift
+│   ├── typst_quick_exten.entitlements
 │   └── Info.plist
 └── README.md
 ```
 
-## 🔧 Build Process
+## Build Notes
 
-### Automatic Build (Recommended)
+### Automatic build from Xcode
 
-When you build in Xcode (`Cmd+B`), the pre-build script automatically:
-1. Checks if `libtypst` exists (clones it if missing)
-2. Detects your CPU architecture (Apple Silicon or Intel)
-3. Compiles Rust code for your architecture
-4. Generates `libs/libtypst_c.a` static library
-5. Copies header files to `libs/include/`
+During a normal Xcode build, `scripts/build_rust.sh`:
 
-### Manual Build
+1. checks that `libtypst` exists
+2. ensures the Rust target for the current CPU architecture is installed
+3. builds the Rust static library
+4. copies the library and header into `libs/`
 
-To manually compile the Rust library:
+### Manual rebuild
 
 ```bash
 ./scripts/build_rust.sh
 ```
 
-### Updating libtypst
-
-To update the Typst compiler to the latest version:
+### Updating `libtypst`
 
 ```bash
 cd libtypst
@@ -128,61 +155,81 @@ cd ..
 ./scripts/build_rust.sh
 ```
 
-## 📚 Documentation
+## Host App UI
 
-- [scripts/XCODE_SETUP.md](scripts/XCODE_SETUP.md) - Detailed Xcode configuration steps
-- [scripts/README_BUILD.md](scripts/README_BUILD.md) - Complete build documentation and troubleshooting
+The host app now acts as a small monitoring dashboard. It shows:
 
-## 🐛 Troubleshooting
+- current package being processed
+- pending queue
+- installed packages
+- last event
+- last error
 
-### Q: First build is very slow?
-**A:** This is normal! Rust needs to download and compile dependencies on first build (~5-10 minutes). Subsequent builds are much faster (seconds).
+This makes it easier to understand package download behavior without watching Console logs.
 
-### Q: `cargo: command not found` error?
-**A:** Install Rust:
+## Troubleshooting
+
+### First build is slow
+
+This is expected. Rust dependencies are downloaded and compiled on the first build.
+
+### `cargo: command not found`
+
+Install Rust and load Cargo into your shell:
+
 ```bash
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-source $HOME/.cargo/env
+source "$HOME/.cargo/env"
 ```
 
-### Q: Build fails in Xcode?
-**A:** 
-1. Check if `libs/libtypst_c.a` exists: `ls libs/libtypst_c.a`
-2. If missing, run manually: `./scripts/build_rust.sh`
-3. Verify Build Settings are configured correctly (see [scripts/XCODE_SETUP.md](scripts/XCODE_SETUP.md))
+### Xcode cannot find `typst_c.h`
 
-### Q: Xcode can't find header files?
-**A:** 
-1. Verify `libs/include/typst_c.h` exists
-2. Check Build Settings → Header Search Paths includes `$(PROJECT_DIR)/libs/include`
+Check that:
 
-### Q: More issues?
-**A:** See the detailed troubleshooting guide: [scripts/README_BUILD.md](scripts/README_BUILD.md)
+- `libs/include/typst_c.h` exists
+- Header Search Paths contains `$(PROJECT_DIR)/libs/include`
 
-## ⚠️ Known Issues
+### Xcode cannot link `libtypst_c.a`
 
-- Font detection may not work correctly for some fonts
-- Initial preview generation can be slow for large documents
+Check that:
 
-## 🎯 How It Works
+- `libs/libtypst_c.a` exists
+- Library Search Paths contains `$(PROJECT_DIR)/libs`
+- Other Linker Flags contains `-ltypst_c -framework Security -framework CoreFoundation`
 
-1. **Xcode Build Phase** triggers `build_rust.sh`
-2. **Rust Compilation** builds Typst compiler bindings as a static library
-3. **Swift Code Linking** links against the Rust static library via FFI
-4. **Quick Look Extension** uses the compiled library to render Typst files
-5. **macOS Integration** registers the extension for `.typ` files
+### Preview works for simple files but fails for package-based files
 
-## 📄 License
+Make sure the host app is running. Package downloads are handled by the host app, not by the Quick Look extension itself.
 
-Apache License 2.0 (same as Typst)
+### Need a clean rebuild
 
-## 🔗 Related Links
+```bash
+cd libtypst
+cargo clean
+cd ..
+rm -rf libs/
+./scripts/build_rust.sh
+```
+
+## Known Limitations
+
+- First-time preview of documents with package dependencies can require an extra Quick Look retry
+- Font availability
+- can't work with images (due to MacOS)
+- This project currently focuses on `@preview/...` style package workflows
+
+## Documentation
+
+- [scripts/XCODE_SETUP.md](scripts/XCODE_SETUP.md)
+- [scripts/README_BUILD.md](scripts/README_BUILD.md)
+
+## License
+
+Apache License 2.0, consistent with Typst.
+
+## Related Links
 
 - [Typst Official Website](https://typst.app/)
 - [Typst Documentation](https://typst.app/docs/)
-- [libtypst Repository](https://github.com/WangHaoZhengMing/libtypst) - Rust bindings used by this project
+- [libtypst Repository](https://github.com/WangHaoZhengMing/libtypst)
 - [Rust Official Website](https://www.rust-lang.org/)
-
-## 🙏 Acknowledgments
-
-This project uses the Typst compiler and builds upon the Rust ecosystem.
