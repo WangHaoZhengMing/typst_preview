@@ -45,14 +45,14 @@ final class ThumbnailProvider: QLThumbnailProvider {
                     handler(self.placeholderReply(
                         for: request,
                         title: "Downloading dependencies",
-                        subtitle: transitiveMissing.map { "@\($0.namespace)/\($0.package):\($0.version)" }.joined(separator: ", ")
+                        subtitle: self.statusSubtitle(for: transitiveMissing.count, noun: "dependency")
                     ), nil)
                     return
                 }
 
-                handler(self.placeholderReply(for: request, title: "Typst", subtitle: message), nil)
+                handler(self.placeholderReply(for: request, title: "Compile error", subtitle: self.summarizedMessage(message)), nil)
             } catch {
-                handler(self.placeholderReply(for: request, title: "Typst", subtitle: error.localizedDescription), nil)
+                handler(self.placeholderReply(for: request, title: "Typst", subtitle: self.summarizedMessage(error.localizedDescription)), nil)
             }
         }
     }
@@ -205,11 +205,12 @@ final class ThumbnailProvider: QLThumbnailProvider {
         let size = request.maximumSize
         return QLThumbnailReply(contextSize: size, drawing: { context in
             let rect = CGRect(origin: .zero, size: size)
+            let cornerRadius: CGFloat = min(rect.width, rect.height) * 0.08
             let background = CGGradient(
                 colorsSpace: CGColorSpaceCreateDeviceRGB(),
                 colors: [
-                    NSColor(calibratedRed: 0.11, green: 0.17, blue: 0.27, alpha: 1.0).cgColor,
-                    NSColor(calibratedRed: 0.12, green: 0.36, blue: 0.54, alpha: 1.0).cgColor,
+                    NSColor(calibratedRed: 0.05, green: 0.13, blue: 0.22, alpha: 1.0).cgColor,
+                    NSColor(calibratedRed: 0.08, green: 0.42, blue: 0.60, alpha: 1.0).cgColor,
                 ] as CFArray,
                 locations: [0, 1]
             )
@@ -221,33 +222,107 @@ final class ThumbnailProvider: QLThumbnailProvider {
                 context.fill(rect)
             }
 
-            let iconRect = CGRect(x: 24, y: rect.height - 92, width: 44, height: 56)
-            context.setFillColor(NSColor.white.withAlphaComponent(0.18).cgColor)
-            context.fill(iconRect)
-            context.setStrokeColor(NSColor.white.withAlphaComponent(0.5).cgColor)
-            context.stroke(iconRect, width: 1)
+            let glowRect = rect.insetBy(dx: rect.width * 0.10, dy: rect.height * 0.14)
+            context.setFillColor(NSColor.white.withAlphaComponent(0.05).cgColor)
+            context.fillEllipse(in: glowRect)
+
+            let cardWidth = min(rect.width * 0.74, 320)
+            let cardHeight = min(rect.height * 0.72, 240)
+            let cardRect = CGRect(
+                x: (rect.width - cardWidth) * 0.5,
+                y: (rect.height - cardHeight) * 0.5,
+                width: cardWidth,
+                height: cardHeight
+            )
+
+            let cardPath = CGPath(roundedRect: cardRect, cornerWidth: cornerRadius, cornerHeight: cornerRadius, transform: nil)
+            context.saveGState()
+            context.setShadow(offset: CGSize(width: 0, height: -8), blur: 22, color: NSColor.black.withAlphaComponent(0.22).cgColor)
+            context.addPath(cardPath)
+            context.setFillColor(NSColor.white.cgColor)
+            context.fillPath()
+            context.restoreGState()
+
+            let foldWidth = cardRect.width * 0.20
+            let foldHeight = cardRect.height * 0.16
+            let foldPath = CGMutablePath()
+            foldPath.move(to: CGPoint(x: cardRect.maxX - foldWidth, y: cardRect.maxY))
+            foldPath.addLine(to: CGPoint(x: cardRect.maxX, y: cardRect.maxY))
+            foldPath.addLine(to: CGPoint(x: cardRect.maxX, y: cardRect.maxY - foldHeight))
+            foldPath.closeSubpath()
+            context.addPath(foldPath)
+            context.setFillColor(NSColor(calibratedWhite: 0.93, alpha: 1.0).cgColor)
+            context.fillPath()
+
+            let badgeRect = CGRect(x: cardRect.minX + 18, y: cardRect.maxY - 52, width: 38, height: 24)
+            let badgePath = CGPath(roundedRect: badgeRect, cornerWidth: 10, cornerHeight: 10, transform: nil)
+            context.addPath(badgePath)
+            context.setFillColor(NSColor(calibratedRed: 0.09, green: 0.44, blue: 0.82, alpha: 1.0).cgColor)
+            context.fillPath()
 
             NSGraphicsContext.saveGraphicsState()
             let graphicsContext = NSGraphicsContext(cgContext: context, flipped: false)
             NSGraphicsContext.current = graphicsContext
 
-            let titleAttributes: [NSAttributedString.Key: Any] = [
-                .font: NSFont.systemFont(ofSize: 20, weight: .semibold),
+            let badgeAttributes: [NSAttributedString.Key: Any] = [
+                .font: NSFont.systemFont(ofSize: 12, weight: .bold),
                 .foregroundColor: NSColor.white,
             ]
+            let titleAttributes: [NSAttributedString.Key: Any] = [
+                .font: NSFont.systemFont(ofSize: min(24, rect.width * 0.08), weight: .bold),
+                .foregroundColor: NSColor(calibratedWhite: 0.15, alpha: 1.0),
+            ]
             let subtitleAttributes: [NSAttributedString.Key: Any] = [
-                .font: NSFont.systemFont(ofSize: 12, weight: .regular),
-                .foregroundColor: NSColor.white.withAlphaComponent(0.85),
+                .font: NSFont.systemFont(ofSize: min(14, rect.width * 0.05), weight: .medium),
+                .foregroundColor: NSColor(calibratedWhite: 0.35, alpha: 1.0),
+            ]
+            let footerAttributes: [NSAttributedString.Key: Any] = [
+                .font: NSFont.systemFont(ofSize: min(11, rect.width * 0.04), weight: .medium),
+                .foregroundColor: NSColor(calibratedWhite: 0.55, alpha: 1.0),
             ]
 
+            let badgeString = NSAttributedString(string: "T", attributes: badgeAttributes)
             let titleString = NSAttributedString(string: title, attributes: titleAttributes)
             let subtitleString = NSAttributedString(string: subtitle, attributes: subtitleAttributes)
+            let footerString = NSAttributedString(string: "Typst Quick Look", attributes: footerAttributes)
 
-            titleString.draw(in: CGRect(x: 84, y: rect.height - 78, width: rect.width - 104, height: 28))
-            subtitleString.draw(in: CGRect(x: 24, y: 24, width: rect.width - 48, height: rect.height - 120))
+            badgeString.draw(in: CGRect(x: badgeRect.minX + 13, y: badgeRect.minY + 4, width: 12, height: 16))
+            titleString.draw(in: CGRect(x: cardRect.minX + 18, y: cardRect.maxY - 96, width: cardRect.width - 36, height: 30))
+            subtitleString.draw(in: CGRect(x: cardRect.minX + 18, y: cardRect.minY + 52, width: cardRect.width - 36, height: cardRect.height - 120))
+            footerString.draw(in: CGRect(x: cardRect.minX + 18, y: cardRect.minY + 18, width: cardRect.width - 36, height: 16))
             NSGraphicsContext.restoreGraphicsState()
             return true
         })
+    }
+
+    private func summarizedMessage(_ message: String) -> String {
+        let lowered = message.lowercased()
+        if lowered.contains("file not found") && lowered.contains("/packages/") {
+            return "A required package version is missing"
+        }
+        if lowered.contains("math") {
+            return "Math rendering is not available yet"
+        }
+        if lowered.contains("image") || lowered.contains("asset") {
+            return "External assets are blocked by sandbox rules"
+        }
+        if lowered.contains("sandbox") || lowered.contains("access denied") {
+            return "Sandbox restrictions prevented rendering"
+        }
+        if lowered.contains("network") {
+            return "Network access is unavailable here"
+        }
+        let compact = message
+            .replacingOccurrences(of: "\n", with: " ")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        return compact.isEmpty ? "Preview could not be generated" : String(compact.prefix(72))
+    }
+
+    private func statusSubtitle(for count: Int, noun: String) -> String {
+        if count == 1 {
+            return "1 \(noun) pending"
+        }
+        return "\(count) \(noun)s pending"
     }
 
     private func fittedSize(for originalSize: CGSize, maximum: CGSize) -> CGSize {
