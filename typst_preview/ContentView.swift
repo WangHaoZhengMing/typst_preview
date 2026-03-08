@@ -65,13 +65,13 @@ struct ContentView: View {
                 Text("Typst Preview Host")
                     .font(.system(size: 28, weight: .bold))
 
-                Text("负责接收 Quick Look 请求、下载依赖包并维护共享缓存。")
+                Text("Receives Quick Look requests, downloads package dependencies, and maintains the shared cache.")
                     .foregroundColor(.secondary)
             }
 
             Spacer()
 
-            Button("刷新包列表") {
+            Button("Refresh Package List") {
                 downloaderDaemon.refreshInstalledPackages()
             }
         }
@@ -79,24 +79,24 @@ struct ContentView: View {
 
     private var statusCard: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("当前状态")
+            Text("Status")
                 .font(.headline)
 
-            statusRow(title: "最近事件", value: downloaderDaemon.lastEvent)
-            statusRow(title: "当前包", value: downloaderDaemon.currentPackage?.displayName ?? "空闲")
-            statusRow(title: "待处理数量", value: "\(downloaderDaemon.queuedPackages.count)")
-            statusRow(title: "已安装数量", value: "\(downloaderDaemon.installedPackages.count)")
+            statusRow(title: "Last Event", value: downloaderDaemon.lastEvent)
+            statusRow(title: "Current Package", value: downloaderDaemon.currentPackage?.displayName ?? "Idle")
+            statusRow(title: "Queued", value: "\(downloaderDaemon.queuedPackages.count)")
+            statusRow(title: "Installed", value: "\(downloaderDaemon.installedPackages.count)")
 
             if let lastRequestAt = downloaderDaemon.lastRequestAt {
                 statusRow(
-                    title: "最近请求",
+                    title: "Last Request",
                     value: lastRequestAt.formatted(date: .abbreviated, time: .standard)
                 )
             }
 
             if let lastError = downloaderDaemon.lastError {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("最近错误")
+                    Text("Last Error")
                         .font(.subheadline.weight(.semibold))
                         .foregroundColor(.red)
                     Text(lastError)
@@ -117,11 +117,11 @@ struct ContentView: View {
 
     private var queueCard: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("下载队列")
+            Text("Download Queue")
                 .font(.headline)
 
             if downloaderDaemon.queuedPackages.isEmpty {
-                Text("当前没有待处理下载。")
+                Text("There are no pending downloads right now.")
                     .foregroundColor(.secondary)
             } else {
                 ForEach(downloaderDaemon.queuedPackages) { package in
@@ -136,11 +136,11 @@ struct ContentView: View {
 
     private var installedPackagesCard: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("已安装包")
+            Text("Installed Packages")
                 .font(.headline)
 
             if downloaderDaemon.installedPackages.isEmpty {
-                Text("共享缓存中还没有包。")
+                Text("No packages have been installed into the shared cache yet.")
                     .foregroundColor(.secondary)
             } else {
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 220), spacing: 12)], spacing: 12) {
@@ -189,7 +189,7 @@ struct ContentView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(package.displayName)
                     .font(.system(size: 14, weight: .medium))
-                Text("等待下载或依赖扫描")
+                Text("Waiting for download or dependency scan")
                     .font(.system(size: 12))
                     .foregroundColor(.secondary)
             }

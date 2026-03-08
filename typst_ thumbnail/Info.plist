@@ -6,8 +6,20 @@
 	<dict>
 		<key>NSExtensionAttributes</key>
 		<dict>
+			<key>QLIsDataBasedPreview</key>
+			<false/>
 			<key>QLSupportedContentTypes</key>
-			<array/>
+			<array>
+				<string>app.typst.typ</string>
+				<string>com.unknown.typ</string>
+				<string>public.plain-text</string>
+				<string>public.text</string>
+				<string>public.data</string>
+			</array>
+			<key>QLSupportedExtensions</key>
+			<array>
+				<string>typ</string>
+			</array>
 			<key>QLThumbnailMinimumDimension</key>
 			<integer>0</integer>
 		</dict>
